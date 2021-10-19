@@ -1,0 +1,5 @@
+discord.py
+requests
+python-decouple
+youtube-search-python
+youtube-dl
