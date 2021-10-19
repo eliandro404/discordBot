@@ -93,22 +93,22 @@ class Musics(commands.Cog):
         vc = ctx.voice_client
 
         url1 = ' '.join(url)
-        # padrao_url = re.compile('(http(s)?://)?(www.)?youtu(.be/)?(be.com)?/')
+        padrao_url = re.compile('(http(s)?://)?(www.)?youtu(.be/)?(be.com)?/')
 
-        # match = padrao_url.match(url1)
+        match = padrao_url.match(url1)
         videosSearch = VideosSearch(url1, limit=1)
         data = videosSearch.result()
         video_link = data['result'][0]['link']
         video_title = data['result'][0]['title']
 
-        # if match:
-        #     info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(url1, download=False)
-        #     url2 = info['formats'][0]['url']
-        #     source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
-        # else:
-        info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(video_link, download=False)
-        url2 = info['formats'][0]['url']
-        source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
+        if match:
+            info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(url1, download=False)
+            url2 = info['formats'][0]['url']
+            source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
+        else:
+            info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(video_link, download=False)
+            url2 = info['formats'][0]['url']
+            source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
 
         async with ctx.typing():
 
@@ -140,8 +140,8 @@ class Musics(commands.Cog):
             ctx.voice_client.stop()
             voice = ctx.voice_client
             source = queue[id].pop(0)
-            player = voice.play(source, after=lambda x=None: check_queue(ctx, id))
             await ctx.send(":fast_forward: **Tocando a próxima música.** ")
+            player = voice.play(source, after=lambda x=None: check_queue(ctx, id))
 
     @commands.command(name='stop', help='Para a música que está tocando e remove o BOT do canal de voz.')
     async def stop(self, ctx):
