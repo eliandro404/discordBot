@@ -86,8 +86,6 @@ class Musics(commands.Cog):
             await ctx.send(f'**Conectada ao Canal** ``{channel}``')
         else:
             pass
-            # await ctx.send(f'Já estou no canal **{ctx.voice_client.channel}**')
-            # await ctx.voice_client.move_to(voice_channel)
 
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
                           'options': '-vn'}
@@ -95,22 +93,22 @@ class Musics(commands.Cog):
         vc = ctx.voice_client
 
         url1 = ' '.join(url)
-        padrao_url = re.compile('(http(s)?://)?(www.)?youtu(.be/)?(be.com)?/')
+        # padrao_url = re.compile('(http(s)?://)?(www.)?youtu(.be/)?(be.com)?/')
 
-        match = padrao_url.match(url1)
+        # match = padrao_url.match(url1)
         videosSearch = VideosSearch(url1, limit=1)
         data = videosSearch.result()
         video_link = data['result'][0]['link']
         video_title = data['result'][0]['title']
 
-        if match:
-            info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(url1, download=False)
-            url2 = info['formats'][0]['url']
-            source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
-        else:
-            info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(video_link, download=False)
-            url2 = info['formats'][0]['url']
-            source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
+        # if match:
+        #     info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(url1, download=False)
+        #     url2 = info['formats'][0]['url']
+        #     source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
+        # else:
+        info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(video_link, download=False)
+        url2 = info['formats'][0]['url']
+        source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
 
         async with ctx.typing():
 
