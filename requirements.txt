@@ -3,3 +3,4 @@ requests
 python-decouple
 youtube-search-python
 youtube-dl
+PyNaCl
