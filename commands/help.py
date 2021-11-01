@@ -14,8 +14,7 @@ class Help(commands.Cog):
         embed.add_field(name='join', value='Chama o Bot para o seu Canal de Voz', inline=False)
         embed.add_field(name='leave', value='Disconecta o bot do canal de voz.', inline=False)
         embed.add_field(name='play', value='Toca músicas', inline=False)
-        embed.add_field(name='skip', value='Pula para a próxima música na fila. '
-                                           '[PS: caso não tenha uma próxima música o Bot vai parar a atual.', inline=False)
+        embed.add_field(name='skip', value='Pula para a próxima música caso exista uma na fila.', inline=False)
         embed.add_field(name='pause', value='Pausa a música que está tocando.', inline=False)
         embed.add_field(name='resume', value='Retorna a música que estava tocando.', inline=False)
         embed.add_field(name='stop', value='Para a música que está tocando e remove o Bot do canal de voz'
