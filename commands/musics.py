@@ -37,7 +37,7 @@ class Musics(commands.Cog):
         else:
             await ctx.send(f'**Já estou conectada ao canal **``{ctx.voice_client.channel}``')
 
-    @commands.command(aliases=['joinhere', 'come'])
+    @commands.command(aliases=['joinhere'])
     async def moveto(self, ctx):
         if ctx.author.voice.channel == ctx.voice_client.channel:
             await ctx.send(f'**Já estou conectada ao canal **``{ctx.voice_client.channel}``')
