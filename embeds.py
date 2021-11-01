@@ -1,7 +1,7 @@
 import discord
 
 
-async def embed_generator_for_musics_queue(ctx, name, url, channel, duration, url_thumbnail, queue_position):
+async def embed_music_added_to_queue(ctx, name, url, channel, duration, url_thumbnail, queue_position):
     embed_image = discord.Embed(
         title=name,
         # url=url,
