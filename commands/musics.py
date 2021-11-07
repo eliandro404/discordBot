@@ -3,7 +3,7 @@ from discord.ext import commands
 from youtubesearchpython import VideosSearch
 import youtube_dl
 import re
-from embeds import embed_music_added_to_queue
+from embeds import embed_music_added_to_queue, embed_music_queue_list
 
 players = {}
 queue = {}
@@ -14,9 +14,11 @@ def check_queue(ctx, guild_id):
         if len(queue[guild_id]) > 0:
             voice = ctx.voice_client
             source = queue[guild_id].pop(0)
+            queue['names'].pop(0)
             player = voice.play(source, after=lambda x=None: check_queue(ctx, guild_id))
     except:
         del players[guild_id]
+        del queue['names']
 
 
 class Musics(commands.Cog):
@@ -45,7 +47,7 @@ class Musics(commands.Cog):
             await ctx.voice_client.move_to(ctx.author.voice.channel)
             await ctx.reply(f'**Conectada agora ao Canal** ``{ctx.message.author.voice.channel}``')
 
-    @commands.command(aliases=['disconnect, leave'])
+    @commands.command(aliases=['leave'])
     async def disconnect(self, ctx):
         await ctx.voice_client.disconnect()
 
@@ -90,24 +92,34 @@ class Musics(commands.Cog):
             if guild_id not in players:
                 guild_id = ctx.message.guild.id
                 player = ctx.voice_client.play(source, after=lambda x=None: check_queue(ctx, guild_id))
+                queue['names'] = [video_title]
                 players[guild_id] = player
                 await ctx.send(f"**Tocando:** 🎶 `{video_title}` 🎶")
             else:
                 if guild_id not in queue:
                     queue[guild_id] = [source]
+                    queue['names'].append(video_title)
                 else:
                     queue[guild_id].append(source)
+                    queue['names'].append(video_title)
                 await embed_music_added_to_queue(ctx, video_title, video_link,
                                                  data['result'][0]['channel']['name'],
                                                  data['result'][0]['duration'],
                                                  data['result'][0]['thumbnails'][0]['url'],
                                                  len(queue[guild_id]))
 
+    @commands.command(aliases=['fila'])
+    async def queue(self, ctx):
+        if 'names' in queue:
+            await embed_music_queue_list(ctx, queue['names'][0], queue['names'][1:])
+        if 'names' not in queue:
+            await ctx.send('**Nenhuma música está tocando no momento**')
+
     @commands.command()
     async def skip(self, ctx):
         guild_id = ctx.message.guild.id
 
-        if len(queue[guild_id]) < 1:
+        if guild_id not in queue or len(queue[guild_id]) < 1:
             await ctx.send("**Não foi possível pular a música!**")
 
         elif queue:
