@@ -29,6 +29,6 @@ async def embed_music_queue_list(ctx, playing_now, queue_names_list):
     embed.set_thumbnail(url='https://uploads.spiritfanfiction.com/fanfics/capitulos/202010/solangelo--quando-o-sol-e'
                             '-a-lua-se-encontram-20789447-191020202011.gif')
     embed.add_field(name=f'**Tocando agora:** 🎶 `{playing_now.title()}` 🎶', value='\u200b', inline=False)
-    embed.add_field(name='⬇️Próximas músicas⬇', value=embed_list)
+    embed.add_field(name='⬇️Próximas músicas⬇', value=embed_list if len(queue_names_list) >= 1 else '🗿 A Fila está vazia! 🗿')
 
     return await ctx.send(embed=embed)
