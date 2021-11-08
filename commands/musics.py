@@ -98,10 +98,9 @@ class Musics(commands.Cog):
             else:
                 if guild_id not in queue:
                     queue[guild_id] = [source]
-                    queue['names'].append(video_title)
                 else:
                     queue[guild_id].append(source)
-                    queue['names'].append(video_title)
+                queue['names'].append(video_title)
                 await embed_music_added_to_queue(ctx, video_title, video_link,
                                                  data['result'][0]['channel']['name'],
                                                  data['result'][0]['duration'],
@@ -114,6 +113,13 @@ class Musics(commands.Cog):
             await embed_music_queue_list(ctx, queue['names'][0], queue['names'][1:])
         if 'names' not in queue:
             await ctx.send('**Nenhuma música está tocando no momento**')
+
+    @commands.command(aliases=["qc"])
+    async def queueclear(self, ctx):
+        del queue[ctx.message.guild.id]
+        del queue["names"]
+        del players[ctx.message.guild.id]
+        await ctx.send('**A fila foi limpa**')
 
     @commands.command()
     async def skip(self, ctx):
