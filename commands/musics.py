@@ -83,7 +83,7 @@ class Musics(commands.Cog):
             info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(video_link, download=False)
             url2 = info['formats'][0]['url']
             source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
-            await ctx.send(f" 🔎 **Procurando por: ** `{url1.title()}`")
+            await ctx.send(f' 🔎 **Procurando por: ** `{url1.title()}`')
 
         async with ctx.typing():
 
@@ -114,40 +114,66 @@ class Musics(commands.Cog):
         if 'names' not in queue:
             await ctx.send('**Nenhuma música está tocando no momento**')
 
-    @commands.command(aliases=["qc"])
-    async def queueclear(self, ctx):
-        if ctx.message.guild.id in queue:
-            del queue[ctx.message.guild.id], queue["names"], players[ctx.message.guild.id]
-            await ctx.send('**A fila foi limpa**')
+    @commands.command()
+    async def clear(self, ctx):
+        if ctx.message.guild.id in queue and len(queue[ctx.message.guild.id]) > 0:
+            del queue[ctx.message.guild.id], queue['names'][1:]
+            await ctx.send('**Fila limpa! :)**')
         else:
-            await ctx.send('**A fila já está vazia!!**')
+            await ctx.send('**A fila já tá vazia**')
+
+    @commands.command()
+    async def remove(self, ctx, position):
+        if ctx.message.guild.id not in queue or len(queue[ctx.message.guild.id]) == 0 or str(position).isalpha() \
+                or int(position) > len(queue['names']):
+            await ctx.send("**Ei, não tem nada nessa posição...**")
+        elif str(position).isdigit():
+            if ctx.message.guild.id in queue and int(position) <= len(queue['names']):
+                await ctx.send(f'**Removendo a música `{queue["names"][int(position)]}` da fila**')
+                del queue[ctx.message.guild.id][int(position) - 1], queue["names"][int(position)]
 
     @commands.command()
     async def skip(self, ctx):
         guild_id = ctx.message.guild.id
 
         if guild_id not in queue or len(queue[guild_id]) < 1:
-            await ctx.send("**Não foi possível pular a música!**")
+            await ctx.send('**Não foi possível pular a música!**')
 
         elif queue:
             voice = ctx.voice_client
             voice.stop()
-            await ctx.send(":fast_forward: **Tocando a próxima música.** ")
+            await ctx.send(':fast_forward: **Tocando a próxima música.** ')
+
+    @commands.command()
+    async def skipto(self, ctx, position):
+        if ctx.message.guild.id not in queue or len(queue[ctx.message.guild.id]) == 0 or str(position).isalpha() \
+                or int(position) > len(queue['names']):
+            await ctx.send("**Ei, não tem nada nessa posição...**")
+        else:
+            await ctx.send(f':fast_forward: **Tocando agora: `{queue["names"][int(position)]}`.** ')
+            del queue[ctx.message.guild.id][:int(position) - 1], queue['names'][:int(position) - 1]
+            ctx.voice_client.stop()
 
     @commands.command()
     async def stop(self, ctx):
         ctx.voice_client.stop()
+        if ctx.message.guild.id in queue:
+            del queue[ctx.message.guild.id]
+        if 'names' in queue:
+            del queue['names']
+        if ctx.message.guild.id in players:
+            del players[ctx.message.guild.id]
         await ctx.voice_client.disconnect()
 
     @commands.command()
     async def pause(self, ctx):
         ctx.voice_client.pause()
-        await ctx.send("**A música foi pausada. `!resume` para continuar.**")
+        await ctx.send('**A música foi pausada. `!resume` para continuar.**')
 
     @commands.command()
     async def resume(self, ctx):
         ctx.voice_client.resume()
-        await ctx.send("**A música voltou a tocar.**")
+        await ctx.send('**A música voltou a tocar.**')
 
 
 def setup(bot):
