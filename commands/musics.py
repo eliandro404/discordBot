@@ -117,9 +117,7 @@ class Musics(commands.Cog):
     @commands.command(aliases=["qc"])
     async def queueclear(self, ctx):
         if ctx.message.guild.id in queue:
-            del queue[ctx.message.guild.id]
-            del queue["names"]
-            del players[ctx.message.guild.id]
+            del queue[ctx.message.guild.id], queue["names"], players[ctx.message.guild.id]
             await ctx.send('**A fila foi limpa**')
         else:
             await ctx.send('**A fila já está vazia!!**')
