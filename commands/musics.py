@@ -10,13 +10,12 @@ queue = {}
 
 
 def check_queue(ctx, guild_id):
-    try:
-        if len(queue[guild_id]) > 0:
-            voice = ctx.voice_client
-            source = queue[guild_id].pop(0)
-            queue['names'].pop(0)
-            player = voice.play(source, after=lambda x=None: check_queue(ctx, guild_id))
-    except:
+    if len(queue[guild_id]) > 0:
+        voice = ctx.voice_client
+        source = queue[guild_id].pop(0)
+        queue['names'].pop(0)
+        player = voice.play(source, after=lambda x=None: check_queue(ctx, guild_id))
+    else:
         del players[guild_id]
         del queue['names']
 
