@@ -10,7 +10,7 @@ queue = {}
 
 
 def check_queue(ctx, guild_id):
-    if len(queue[guild_id]) > 0:
+    if guild_id in queue and len(queue[guild_id]) > 0:
         voice = ctx.voice_client
         source = queue[guild_id].pop(0)
         queue['names'].pop(0)
@@ -66,13 +66,12 @@ class Musics(commands.Cog):
 
         url1 = ' '.join(url)
         padrao_url = re.compile('(http(s)?://)?(www.)?youtu(.be/)?(be.com)?/')
-        match = padrao_url.match(url1)
         videosSearch = VideosSearch(url1, limit=1)
         data = videosSearch.result()
         video_link = data['result'][0]['link']
         video_title = data['result'][0]['title']
 
-        if match:
+        if padrao_url.match(url1):
             video_link = url1
             info = youtube_dl.YoutubeDL(YDL_OPTIONS).extract_info(url1, download=False)
             url2 = info['formats'][0]['url']
